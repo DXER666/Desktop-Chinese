@@ -1,0 +1,84 @@
+import * as React from 'react'
+
+import { Dispatcher } from '../dispatcher'
+
+import { Repository } from '../../models/repository'
+import { Branch } from '../../models/branch'
+import { PullRequest } from '../../models/pull-request'
+
+import { Dialog, DialogContent, DialogFooter } from '../dialog'
+import { LinkButton } from '../lib/link-button'
+import { OkCancelButtonGroup } from '../dialog/ok-cancel-button-group'
+import { withTranslation, WithTranslation } from 'react-i18next'
+
+interface IDeleteBranchProps {
+  readonly dispatcher: Dispatcher
+  readonly repository: Repository
+  readonly branch: Branch
+  readonly pullRequest: PullRequest
+  readonly onDismissed: () => void
+}
+
+class DeletePullRequestInternal extends React.Component<
+  IDeleteBranchProps & WithTranslation,
+  {}
+> {
+  public render() {
+    const { t } = this.props
+    return (
+      <Dialog
+        id="delete-branch"
+        title={
+          __DARWIN__
+            ? t('deleteBranch.titleDarwin', 'Delete Branch')
+            : t('deleteBranch.titleOther', 'Delete branch')
+        }
+        type="warning"
+        onDismissed={this.props.onDismissed}
+        onSubmit={this.deleteBranch}
+      >
+        <DialogContent>
+          <p>
+            {t(
+              'deleteBranch.openPullRequestWarning',
+              'This branch may have an open pull request associated with it.'
+            )}
+          </p>
+          <p>
+            {t('deleteBranch.mergedPullRequestPrefix', 'If')}{' '}
+            <LinkButton onClick={this.openPullRequest}>
+              #{this.props.pullRequest.pullRequestNumber}
+            </LinkButton>{' '}
+            {t(
+              'deleteBranch.mergedPullRequestSuffix',
+              'has been merged, you can also go to GitHub to delete the remote branch.'
+            )}
+          </p>
+        </DialogContent>
+        <DialogFooter>
+          <OkCancelButtonGroup
+            destructive={true}
+            okButtonText={t('deleteBranch.okButton', 'Delete')}
+          />
+        </DialogFooter>
+      </Dialog>
+    )
+  }
+
+  private openPullRequest = () => {
+    this.props.dispatcher.showPullRequest(this.props.repository)
+  }
+
+  private deleteBranch = () => {
+    this.props.dispatcher.deleteLocalBranch(
+      this.props.repository,
+      this.props.branch
+    )
+
+    return this.props.onDismissed()
+  }
+}
+
+export const DeletePullRequest = withTranslation()(
+  DeletePullRequestInternal
+) as unknown as React.ComponentClass<IDeleteBranchProps>

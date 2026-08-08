@@ -1,0 +1,136 @@
+import * as React from 'react'
+
+import { Dispatcher } from '../dispatcher'
+import { Repository } from '../../models/repository'
+import { Branch } from '../../models/branch'
+import { Checkbox, CheckboxValue } from '../lib/checkbox'
+import { Dialog, DialogContent, DialogFooter } from '../dialog'
+import { Ref } from '../lib/ref'
+import { OkCancelButtonGroup } from '../dialog/ok-cancel-button-group'
+import { withTranslation, WithTranslation } from 'react-i18next'
+
+interface IDeleteBranchProps {
+  readonly dispatcher: Dispatcher
+  readonly repository: Repository
+  readonly branch: Branch
+  readonly existsOnRemote: boolean
+  readonly onDismissed: () => void
+  readonly onDeleted: (repository: Repository) => void
+}
+
+interface IDeleteBranchState {
+  readonly includeRemoteBranch: boolean
+  readonly isDeleting: boolean
+}
+
+class DeleteBranchInternal extends React.Component<
+  IDeleteBranchProps & WithTranslation,
+  IDeleteBranchState
+> {
+  public constructor(props: IDeleteBranchProps & WithTranslation) {
+    super(props)
+
+    this.state = {
+      includeRemoteBranch: false,
+      isDeleting: false,
+    }
+  }
+
+  public render() {
+    const { t } = this.props
+    return (
+      <Dialog
+        id="delete-branch"
+        title={
+          __DARWIN__
+            ? t('deleteBranch.titleDarwin', 'Delete Branch')
+            : t('deleteBranch.titleOther', 'Delete branch')
+        }
+        type="warning"
+        onSubmit={this.deleteBranch}
+        onDismissed={this.props.onDismissed}
+        disabled={this.state.isDeleting}
+        loading={this.state.isDeleting}
+        role="alertdialog"
+        ariaDescribedBy="delete-branch-confirmation-message delete-branch-confirmation-message-remote"
+      >
+        <DialogContent>
+          <div id="delete-branch-confirmation-message">
+            <p>
+              {t('deleteBranch.deleteBranchPrefix', 'Delete branch')}{' '}
+              <Ref>{this.props.branch.name}</Ref>?
+            </p>
+            <p>{t('deleteBranch.cannotUndo', 'This action cannot be undone.')}</p>
+
+            {this.renderDeleteOnRemote()}
+          </div>
+        </DialogContent>
+        <DialogFooter>
+          <OkCancelButtonGroup
+            destructive={true}
+            okButtonText={t('deleteBranch.okButton', 'Delete')}
+          />
+        </DialogFooter>
+      </Dialog>
+    )
+  }
+
+  private renderDeleteOnRemote() {
+    const { t } = this.props
+    if (this.props.branch.upstreamRemoteName && this.props.existsOnRemote) {
+      return (
+        <div>
+          <p id="delete-branch-confirmation-message-remote">
+            <strong>
+              {t(
+                'deleteBranch.alsoExistsOnRemote',
+                'The branch also exists on the remote, do you wish to delete it there as well?'
+              )}
+            </strong>
+          </p>
+          <Checkbox
+            label={t(
+              'deleteBranch.includeRemoteLabel',
+              'Yes, delete this branch on the remote'
+            )}
+            value={
+              this.state.includeRemoteBranch
+                ? CheckboxValue.On
+                : CheckboxValue.Off
+            }
+            onChange={this.onIncludeRemoteChanged}
+          />
+        </div>
+      )
+    }
+
+    return null
+  }
+
+  private onIncludeRemoteChanged = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
+    const value = event.currentTarget.checked
+
+    this.setState({ includeRemoteBranch: value })
+  }
+
+  private deleteBranch = async () => {
+    const { dispatcher, repository, branch } = this.props
+
+    this.setState({ isDeleting: true })
+
+    await dispatcher.deleteLocalBranch(
+      repository,
+      branch,
+      this.state.includeRemoteBranch
+    )
+    this.props.onDeleted(repository)
+
+    this.props.onDismissed()
+  }
+}
+
+export const DeleteBranch = withTranslation()(
+  DeleteBranchInternal
+) as unknown as React.ComponentClass<IDeleteBranchProps>
