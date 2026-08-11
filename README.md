@@ -34,6 +34,9 @@ yarn compile:dev
 yarn start
 ```
 
+## 安全反馈
+如果您发现了项目安全隐患或逻辑缺陷请通过邮件提交：security@email.rjjm.dpdns.org我们会尽快核查并跟进处理，感谢您的贡献
+
 ## 相关项目
 
 - [GitHub Desktop 原版](https://github.com/desktop/desktop)
