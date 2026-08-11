@@ -38,6 +38,9 @@ yarn start
 
 - [GitHub Desktop 原版](https://github.com/desktop/desktop)
 
+## 赞助
+
+如果这个项目对你有帮助，欢迎通过爱发电支持我：[前往爱发电赞助](https://ifdian.net/a/gdqbqql)
 ## 许可证
 
 **[MIT](LICENSE)**
