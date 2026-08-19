@@ -3,11 +3,11 @@
   "productName": "GitHub Desktop",
   "bundleID": "com.github.GitHubClient",
   "companyName": "GitHub, Inc.",
-  "version": "3.6.4-Chinese",
+  "version": "3.6.5-Chinese",
   "main": "./main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/desktop/desktop.git"
+    "url": "https://github.com/DXER666/GitHubDesktop-Chinese.git"
   },
   "description": "Simple collaboration from your desktop",
   "author": {

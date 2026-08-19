@@ -42,7 +42,7 @@ const BottomImageUri = encodePathAsUrl(
   'static/welcome-illustration-left-bottom.svg'
 )
 
-const issuesUri = 'https://github.com/desktop/desktop/issues'
+const issuesUri = 'https://github.com/DXER666/GitHubDesktop-Chinese/issues'
 
 /**
  * Formats an error by attempting to strip out user-identifiable information
@@ -62,7 +62,7 @@ function prepareErrorMessage(error: Error) {
         // `at file:///SOME_USER_SPECIFIC_PATH/app/renderer.js:6:4250`
         //
         // We want to try to strip the user-specific path part out.
-        const match = line.match(/(\s*)(.*)(\(|file:\/\/\/).*(app.*)/)
+        const match = line.match(/(\s*)(.*)(\(|file:///).*(app.*)/)
 
         return !match || match.length < 5
           ? line

@@ -24,8 +24,8 @@ const logoPath = __DARWIN__
   : 'static/windows-logo-64x64@2x.png'
 const DesktopLogo = encodePathAsUrl(__dirname, logoPath)
 
-const ReportIssueUri = 'https://github.com/DXER666/Desktop-Chinese/issues'
-const RepositoryUri = 'https://github.com/DXER666/Desktop-Chinese'
+const ReportIssueUri = 'https://github.com/DXER666/GitHubDesktop-Chinese/issues'
+const RepositoryUri = 'https://github.com/DXER666/GitHubDesktop-Chinese'
 
 interface IAboutProps {
   /**
